@@ -49,7 +49,7 @@
 
     .grid-dashboard {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 15px;
       margin-bottom: 20px;
     }
@@ -70,7 +70,7 @@
     }
 
     .card .value {
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       font-weight: bold;
       color: #ffffff;
     }
@@ -78,7 +78,7 @@
     .card .subvalue {
       font-size: 0.85rem;
       color: #8b949e;
-      margin-top: 4px;
+      margin-top: 5px;
     }
 
     .progress-bar-bg {
@@ -100,11 +100,12 @@
 
     .status-badge {
       margin-top: 15px;
-      padding: 14px;
+      padding: 12px;
       border-radius: 8px;
       font-weight: 500;
       text-align: center;
       line-height: 1.4;
+      font-size: 0.9rem;
     }
 
     .status-ok { background-color: rgba(46, 160, 67, 0.15); border: 1px solid var(--accent-green); color: #56d364; }
@@ -192,8 +193,8 @@
       background-color: rgba(47, 129, 247, 0.1);
       border: 1px solid var(--accent-blue);
       border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 15px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -210,13 +211,13 @@
 
   <div class="container">
     <div class="header">
-      <h1>✈️ Meta de Ahorro: Viaje México 2028</h1>
-      <p style="margin: 0; color: #8b949e;">Salida: 28 de Enero de 2028 | Duración: 30 Días</p>
+      <h1>✈️ Control de Ahorro: Viaje México 2028</h1>
+      <p style="margin: 0; color: #8b949e;">Fecha Objetivo de Salida: 28 de Enero de 2028</p>
     </div>
 
     <!-- TIPO DE CAMBIO -->
     <div class="tc-box">
-      <span>💱 <strong>Tipo de Cambio (UYU / USD):</strong></span>
+      <span>💱 <strong>Cotización Dólar (UYU / USD):</strong></span>
       <div style="display: flex; align-items: center; gap: 8px;">
         <span>$1 USD =</span>
         <input type="number" id="input-tc" value="40.0" step="0.1">
@@ -224,69 +225,78 @@
       </div>
     </div>
 
-    <!-- DASHBOARD PRINCIPAL -->
+    <!-- TABLERO PRINCIPAL (TARJETAS) -->
     <div class="grid-dashboard">
       <div class="card">
-        <h3>Meta Presupuestada</h3>
+        <h3>Meta del Viaje</h3>
         <div class="value" id="disp-meta-usd">$0 USD</div>
-        <div class="subvalue" id="disp-meta-uyu">$0 UYU</div>
+        <div class="subvalue" id="disp-meta-uyu">Equiv. $0 UYU</div>
       </div>
+
       <div class="card">
         <h3>Total Depositado</h3>
         <div class="value" id="disp-ahorrado-uyu" style="color: var(--accent-green);">$0 UYU</div>
-        <div class="subvalue" id="disp-ahorrado-usd">$0 USD equiv.</div>
+        <div class="subvalue" id="disp-ahorrado-usd">Equiv. $0 USD</div>
       </div>
+
       <div class="card">
         <h3>Faltante para la Meta</h3>
-        <div class="value" id="disp-faltante-usd">$0 USD</div>
-        <div class="subvalue" id="disp-faltante-uyu">$0 UYU</div>
+        <div class="value" id="disp-faltante-uyu" style="color: var(--accent-yellow);">$0 UYU</div>
+        <div class="subvalue" id="disp-faltante-usd">Equiv. $0 USD</div>
+      </div>
+
+      <!-- FECHA ESTIMADA DE FINALIZACIÓN -->
+      <div class="card" style="border-color: var(--accent-blue);">
+        <h3>📅 Fecha Prevista a Terminar</h3>
+        <div class="value" id="disp-fecha-estimada" style="color: #56d364; font-size: 1.15rem;">Sin depósitos</div>
+        <div class="subvalue" id="disp-ritmo-mensual">Sube tu 1er depósito</div>
       </div>
     </div>
 
-    <!-- PROYECCIÓN Y FECHA ESTIMADA -->
+    <!-- BARRA DE PROGRESO -->
     <div class="card" style="margin-bottom: 20px;">
       <div style="display: flex; justify-content: space-between; font-weight: bold;">
-        <span>Progreso del Objetivo</span>
+        <span>Progreso General del Objetivo</span>
         <span id="disp-porcentaje">0%</span>
       </div>
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="progress-fill"></div>
       </div>
       <div id="status-badge" class="status-badge status-warn">
-        Realiza tu primer depósito para proyectar la fecha estimada de finalización.
+        Aún no has registrado depósitos. Ingresa el primero para calcular la proyección.
       </div>
     </div>
 
     <div class="main-grid">
-      <!-- REGISTRO DE DEPÓSITOS EN UYU -->
+      <!-- REGISTRO DE DEPÓSITOS EN PESOS (UYU) -->
       <div>
         <div class="card" style="margin-bottom: 20px;">
-          <h3>📥 Registrar Nuevo Depósito (UYU)</h3>
+          <h3>📥 Registrar Depósito ($ UYU)</h3>
           <form id="form-aporte">
             <div>
               <label>Fecha del Depósito:</label>
               <input type="date" id="input-fecha" required>
             </div>
             <div>
-              <label>Monto Depositado ($ UYU):</label>
-              <input type="number" id="input-monto" placeholder="Ej. 10000" step="100" required>
+              <label>Monto Depositado en Pesos ($ UYU):</label>
+              <input type="number" id="input-monto" placeholder="Ej. 12000" step="100" required>
             </div>
             <div>
               <label>Nota / Origen (Opcional):</label>
-              <input type="text" id="input-nota" placeholder="Ej. Sobrante de mes, extra, etc.">
+              <input type="text" id="input-nota" placeholder="Ej. Ahorro de mes, aguinaldo, etc.">
             </div>
-            <button type="submit">Guardar Depósito</button>
+            <button type="submit">Guardar Depósito UYU</button>
           </form>
         </div>
 
         <div class="card">
-          <h3>📜 Historial de Depósitos</h3>
+          <h3>📜 Historial de Depósitos (UYU)</h3>
           <div style="max-height: 250px; overflow-y: auto;">
             <table>
               <thead>
                 <tr>
                   <th>Fecha</th>
-                  <th>Monto (UYU)</th>
+                  <th>Depósito (UYU)</th>
                   <th>Nota</th>
                   <th></th>
                 </tr>
@@ -297,10 +307,10 @@
         </div>
       </div>
 
-      <!-- DESGLOSE DE PRESUPUESTO EN USD -->
+      <!-- DESGLOSE DE PRESUPUESTO EN DÓLARES (USD) -->
       <div class="card">
-        <h3>📊 Gastos Estimados ($ USD)</h3>
-        <p style="font-size: 0.8rem; color: #8b949e; margin-top: -5px;">Edita los rubros en USD cuando tengas costos confirmados:</p>
+        <h3>📊 Presupuesto Estimado ($ USD)</h3>
+        <p style="font-size: 0.8rem; color: #8b949e; margin-top: -5px;">Modifica los valores en USD según confirmes tarifas:</p>
 
         <div class="item-list">
           <div class="item-row">
@@ -308,7 +318,7 @@
             <input type="number" class="budget-item" data-key="paquete" value="5800" step="50">
           </div>
           <div class="item-row">
-            <span>Traslados Internos (Vuelos/Buses/Ubers)</span>
+            <span>Traslados Internos (Vuelos/Buses)</span>
             <input type="number" class="budget-item" data-key="traslados" value="1400" step="50">
           </div>
           <div class="item-row">
@@ -335,7 +345,7 @@
   <script>
     const FECHA_VIAJE = new Date("2028-01-28");
 
-    let presupuestos = JSON.parse(localStorage.getItem('presupuesto_desglose_v2')) || {
+    let presupuestos = JSON.parse(localStorage.getItem('presupuesto_usd_v3')) || {
       paquete: 5800,
       traslados: 1400,
       cdmx: 700,
@@ -344,20 +354,20 @@
       emergencia: 1000
     };
 
-    let tc = parseFloat(localStorage.getItem('tc_uyu')) || 40.0;
-    let depositos = JSON.parse(localStorage.getItem('depositos_uyu')) || [];
+    let tc = parseFloat(localStorage.getItem('tc_uyu_v3')) || 40.0;
+    let depositos = JSON.parse(localStorage.getItem('depositos_uyu_v3')) || [];
 
     document.getElementById('input-fecha').valueAsDate = new Date();
     document.getElementById('input-tc').value = tc;
 
-    // Actualizar tipo de cambio
+    // Escuchar cambios en tipo de cambio
     document.getElementById('input-tc').addEventListener('input', (e) => {
       tc = parseFloat(e.target.value) || 1;
-      localStorage.setItem('tc_uyu', tc);
+      localStorage.setItem('tc_uyu_v3', tc);
       calcular();
     });
 
-    // Cargar valores iniciales de presupuesto
+    // Escuchar cambios en rubros de presupuesto USD
     document.querySelectorAll('.budget-item').forEach(input => {
       const key = input.getAttribute('data-key');
       if (presupuestos[key] !== undefined) {
@@ -366,77 +376,87 @@
 
       input.addEventListener('input', (e) => {
         presupuestos[key] = parseFloat(e.target.value) || 0;
-        localStorage.setItem('presupuesto_desglose_v2', JSON.stringify(presupuestos));
+        localStorage.setItem('presupuesto_usd_v3', JSON.stringify(presupuestos));
         calcular();
       });
     });
 
     function guardarDepositos() {
-      localStorage.setItem('depositos_uyu', JSON.stringify(depositos));
+      localStorage.setItem('depositos_uyu_v3', JSON.stringify(depositos));
     }
 
     function calcular() {
+      // 1. Cálculos de Totales
       const metaUSD = Object.values(presupuestos).reduce((a, b) => a + b, 0);
       const metaUYU = metaUSD * tc;
 
       const totalUYU = depositos.reduce((acc, curr) => acc + curr.monto, 0);
       const totalUSD = totalUYU / tc;
 
-      const faltanteUSD = Math.max(0, metaUSD - totalUSD);
-      const faltanteUYU = faltanteUSD * tc;
+      const faltanteUYU = Math.max(0, metaUYU - totalUYU);
+      const faltanteUSD = faltanteUYU / tc;
 
-      const porcentaje = metaUSD > 0 ? Math.min(100, (totalUSD / metaUSD) * 100) : 0;
+      const porcentaje = metaUYU > 0 ? Math.min(100, (totalUYU / metaUYU) * 100) : 0;
 
-      // Pantallas Dashboard
+      // 2. Actualizar Pantalla (Dashboard)
       document.getElementById('disp-meta-usd').innerText = `$${metaUSD.toLocaleString('en-US')} USD`;
-      document.getElementById('disp-meta-uyu').innerText = `$${Math.round(metaUYU).toLocaleString('es-UY')} UYU`;
+      document.getElementById('disp-meta-uyu').innerText = `Equiv. $${Math.round(metaUYU).toLocaleString('es-UY')} UYU`;
 
       document.getElementById('disp-ahorrado-uyu').innerText = `$${totalUYU.toLocaleString('es-UY')} UYU`;
-      document.getElementById('disp-ahorrado-usd').innerText = `$${totalUSD.toLocaleString('en-US', {maximumFractionDigits: 0})} USD equiv.`;
+      document.getElementById('disp-ahorrado-usd').innerText = `Equiv. $${Math.round(totalUSD).toLocaleString('en-US')} USD`;
 
-      document.getElementById('disp-faltante-usd').innerText = `$${faltanteUSD.toLocaleString('en-US', {maximumFractionDigits: 0})} USD`;
       document.getElementById('disp-faltante-uyu').innerText = `$${Math.round(faltanteUYU).toLocaleString('es-UY')} UYU`;
+      document.getElementById('disp-faltante-usd').innerText = `Equiv. $${Math.round(faltanteUSD).toLocaleString('en-US')} USD`;
 
       document.getElementById('disp-porcentaje').innerText = `${porcentaje.toFixed(1)}%`;
       document.getElementById('progress-fill').style.width = `${porcentaje}%`;
 
-      // CÁLCULO DE FECHA ESTIMADA SEGÚN RITMO DE DEPÓSITOS REALES
+      // 3. CÁLCULO DE FECHA ESTIMADA DE FINALIZACIÓN
+      const dispFecha = document.getElementById('disp-fecha-estimada');
+      const dispRitmo = document.getElementById('disp-ritmo-mensual');
       const badge = document.getElementById('status-badge');
 
-      if (totalUSD >= metaUSD) {
+      if (totalUYU >= metaUYU) {
+        dispFecha.innerText = "¡META ALCANZADA!";
+        dispRitmo.innerText = "Dispones de todo el dinero";
         badge.className = "status-badge status-ok";
-        badge.innerHTML = "🎉 <strong>¡Meta alcanzada!</strong> Ya dispones del 100% del presupuesto para el viaje.";
-      } else if (depositos.length === 0) {
+        badge.innerHTML = "🎉 <strong>¡Felicitaciones!</strong> Has reunido el 100% de la meta para el viaje.";
+      } 
+      else if (depositos.length === 0) {
+        dispFecha.innerText = "Sin depósitos";
+        dispRitmo.innerText = "Sube tu 1er depósito";
         badge.className = "status-badge status-warn";
-        badge.innerHTML = "Registra tus primeros depósitos para calcular la velocidad de ahorro y estimar la fecha en que reunirás todo el dinero.";
-      } else {
-        // Ordenar fechas de depósitos
+        badge.innerText = "Aún no has registrado depósitos. Ingresa el primero para calcular la proyección.";
+      } 
+      else {
+        // Obtener fecha del primer depósito
         const fechas = depositos.map(d => new Date(d.fecha).getTime()).sort((a, b) => a - b);
-        const primeraFecha = new Date(fechas[0]);
+        const fechaPrimerDeposito = new Date(fechas[0]);
         const hoy = new Date();
 
         // Días transcurridos desde el primer depósito hasta hoy (mínimo 1 día)
-        const diasTranscurridos = Math.max(1, Math.ceil((hoy - primeraFecha) / (1000 * 60 * 60 * 24)));
-        const promedioDiarioUYU = totalUYU / diasTranscurridos;
+        const diasTranscurridos = Math.max(1, Math.ceil((hoy - fechaPrimerDeposito) / (1000 * 60 * 60 * 24)));
+        const ritmoDiarioUYU = totalUYU / diasTranscurridos;
+        const ritmoMensualUYU = ritmoDiarioUYU * 30.4;
 
-        if (promedioDiarioUYU > 0) {
-          const diasFaltantes = Math.ceil(faltanteUYU / promedioDiarioUYU);
-          const fechaEstimada = new Date();
-          fechaEstimada.setDate(fechaEstimada.getDate() + diasFaltantes);
+        if (ritmoDiarioUYU > 0) {
+          const diasNecesarios = Math.ceil(faltanteUYU / ritmoDiarioUYU);
+          const fechaEstimadaFin = new Date();
+          fechaEstimadaFin.setDate(fechaEstimadaFin.getDate() + diasNecesarios);
 
-          const fechaStr = fechaEstimada.toLocaleDateString('es-UY', { year: 'numeric', month: 'long', day: 'numeric' });
-          const promedioMensualUYU = promedioDiarioUYU * 30.4;
+          // Formatear Fecha
+          const opcionesFecha = { year: 'numeric', month: 'short', day: 'numeric' };
+          const fechaTexto = fechaEstimadaFin.toLocaleDateString('es-UY', opcionesFecha);
 
-          if (fechaEstimada <= FECHA_VIAJE) {
+          dispFecha.innerText = fechaTexto;
+          dispRitmo.innerText = `Ritmo: $${Math.round(ritmoMensualUYU).toLocaleString('es-UY')} UYU/mes`;
+
+          if (fechaEstimadaFin <= FECHA_VIAJE) {
             badge.className = "status-badge status-ok";
-            badge.innerHTML = `🚀 <strong>¡Vas a excelente ritmo!</strong><br>` +
-                              `A tu ritmo promedio actual de <strong>$${Math.round(promedioMensualUYU).toLocaleString('es-UY')} UYU/mes</strong>, ` +
-                              `alcanzarás el total el <strong>${fechaStr}</strong> (antes de salir de viaje).`;
+            badge.innerHTML = `🚀 <strong>¡Vas a muy buen ritmo!</strong> Completarías el dinero el <strong>${fechaTexto}</strong> (antes del viaje).`;
           } else {
             badge.className = "status-badge status-warn";
-            badge.innerHTML = `⚠️ <strong>Ritmo por debajo de la meta:</strong><br>` +
-                              `Con tu ritmo promedio actual ($${Math.round(promedioMensualUYU).toLocaleString('es-UY')} UYU/mes), ` +
-                              `completarías el dinero recién el <strong>${fechaStr}</strong>. Considera realizar depósitos más altos.`;
+            badge.innerHTML = `⚠️ <strong>Atención:</strong> A este ritmo finalizarías el <strong>${fechaTexto}</strong> (después de la fecha de viaje). Intenta aumentar tus depósitos.`;
           }
         }
       }
@@ -453,7 +473,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${item.fecha}</td>
-          <td><strong>$${item.monto.toLocaleString('es-UY')}</strong></td>
+          <td><strong>$${item.monto.toLocaleString('es-UY')} UYU</strong></td>
           <td>${item.nota || '-'}</td>
           <td><button class="btn-del" onclick="eliminarDeposito(${indexReal})">✕</button></td>
         `;
