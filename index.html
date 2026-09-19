@@ -225,7 +225,7 @@
       </div>
     </div>
 
-    <!-- TABLERO PRINCIPAL (TARJETAS) -->
+    <!-- TABLERO PRINCIPAL -->
     <div class="grid-dashboard">
       <div class="card">
         <h3>Meta del Viaje</h3>
@@ -283,7 +283,7 @@
             </div>
             <div>
               <label>Nota / Origen (Opcional):</label>
-              <input type="text" id="input-nota" placeholder="Ej. Ahorro de mes, aguinaldo, etc.">
+              <input type="text" id="input-nota" placeholder="Ej. Ahorro de mes, extra, etc.">
             </div>
             <button type="submit">Guardar Depósito UYU</button>
           </form>
@@ -345,7 +345,7 @@
   <script>
     const FECHA_VIAJE = new Date("2028-01-28");
 
-    let presupuestos = JSON.parse(localStorage.getItem('presupuesto_usd_v3')) || {
+    let presupuestos = JSON.parse(localStorage.getItem('presupuesto_usd_v4')) || {
       paquete: 5800,
       traslados: 1400,
       cdmx: 700,
@@ -354,20 +354,18 @@
       emergencia: 1000
     };
 
-    let tc = parseFloat(localStorage.getItem('tc_uyu_v3')) || 40.0;
-    let depositos = JSON.parse(localStorage.getItem('depositos_uyu_v3')) || [];
+    let tc = parseFloat(localStorage.getItem('tc_uyu_v4')) || 40.0;
+    let depositos = JSON.parse(localStorage.getItem('depositos_uyu_v4')) || [];
 
     document.getElementById('input-fecha').valueAsDate = new Date();
     document.getElementById('input-tc').value = tc;
 
-    // Escuchar cambios en tipo de cambio
     document.getElementById('input-tc').addEventListener('input', (e) => {
       tc = parseFloat(e.target.value) || 1;
-      localStorage.setItem('tc_uyu_v3', tc);
+      localStorage.setItem('tc_uyu_v4', tc);
       calcular();
     });
 
-    // Escuchar cambios en rubros de presupuesto USD
     document.querySelectorAll('.budget-item').forEach(input => {
       const key = input.getAttribute('data-key');
       if (presupuestos[key] !== undefined) {
@@ -376,17 +374,16 @@
 
       input.addEventListener('input', (e) => {
         presupuestos[key] = parseFloat(e.target.value) || 0;
-        localStorage.setItem('presupuesto_usd_v3', JSON.stringify(presupuestos));
+        localStorage.setItem('presupuesto_usd_v4', JSON.stringify(presupuestos));
         calcular();
       });
     });
 
     function guardarDepositos() {
-      localStorage.setItem('depositos_uyu_v3', JSON.stringify(depositos));
+      localStorage.setItem('depositos_uyu_v4', JSON.stringify(depositos));
     }
 
     function calcular() {
-      // 1. Cálculos de Totales
       const metaUSD = Object.values(presupuestos).reduce((a, b) => a + b, 0);
       const metaUYU = metaUSD * tc;
 
@@ -398,7 +395,6 @@
 
       const porcentaje = metaUYU > 0 ? Math.min(100, (totalUYU / metaUYU) * 100) : 0;
 
-      // 2. Actualizar Pantalla (Dashboard)
       document.getElementById('disp-meta-usd').innerText = `$${metaUSD.toLocaleString('en-US')} USD`;
       document.getElementById('disp-meta-uyu').innerText = `Equiv. $${Math.round(metaUYU).toLocaleString('es-UY')} UYU`;
 
@@ -411,7 +407,7 @@
       document.getElementById('disp-porcentaje').innerText = `${porcentaje.toFixed(1)}%`;
       document.getElementById('progress-fill').style.width = `${porcentaje}%`;
 
-      // 3. CÁLCULO DE FECHA ESTIMADA DE FINALIZACIÓN
+      // CÁLCULO MEJORADO DE FECHA ESTIMADA (Evita saltos locos con pocos depósitos)
       const dispFecha = document.getElementById('disp-fecha-estimada');
       const dispRitmo = document.getElementById('disp-ritmo-mensual');
       const badge = document.getElementById('status-badge');
@@ -429,14 +425,16 @@
         badge.innerText = "Aún no has registrado depósitos. Ingresa el primero para calcular la proyección.";
       } 
       else {
-        // Obtener fecha del primer depósito
         const fechas = depositos.map(d => new Date(d.fecha).getTime()).sort((a, b) => a - b);
         const fechaPrimerDeposito = new Date(fechas[0]);
         const hoy = new Date();
 
-        // Días transcurridos desde el primer depósito hasta hoy (mínimo 1 día)
-        const diasTranscurridos = Math.max(1, Math.ceil((hoy - fechaPrimerDeposito) / (1000 * 60 * 60 * 24)));
-        const ritmoDiarioUYU = totalUYU / diasTranscurridos;
+        // Calculamos los días transcurridos pero forzamos un MÍNIMO DE 30 DÍAS
+        // para que 1 solo depósito se considere como la cuota del mes y no de 1 solo día.
+        const diasTranscurridosReales = Math.ceil((hoy - fechaPrimerDeposito) / (1000 * 60 * 60 * 24));
+        const diasBase = Math.max(30, diasTranscurridosReales);
+
+        const ritmoDiarioUYU = totalUYU / diasBase;
         const ritmoMensualUYU = ritmoDiarioUYU * 30.4;
 
         if (ritmoDiarioUYU > 0) {
@@ -444,7 +442,6 @@
           const fechaEstimadaFin = new Date();
           fechaEstimadaFin.setDate(fechaEstimadaFin.getDate() + diasNecesarios);
 
-          // Formatear Fecha
           const opcionesFecha = { year: 'numeric', month: 'short', day: 'numeric' };
           const fechaTexto = fechaEstimadaFin.toLocaleDateString('es-UY', opcionesFecha);
 
@@ -453,10 +450,10 @@
 
           if (fechaEstimadaFin <= FECHA_VIAJE) {
             badge.className = "status-badge status-ok";
-            badge.innerHTML = `🚀 <strong>¡Vas a muy buen ritmo!</strong> Completarías el dinero el <strong>${fechaTexto}</strong> (antes del viaje).`;
+            badge.innerHTML = `🚀 <strong>¡Vas a buen ritmo!</strong> A un promedio proyectado de <strong>$${Math.round(ritmoMensualUYU).toLocaleString('es-UY')} UYU/mes</strong>, completarías la meta el <strong>${fechaTexto}</strong>.`;
           } else {
             badge.className = "status-badge status-warn";
-            badge.innerHTML = `⚠️ <strong>Atención:</strong> A este ritmo finalizarías el <strong>${fechaTexto}</strong> (después de la fecha de viaje). Intenta aumentar tus depósitos.`;
+            badge.innerHTML = `⚠️ <strong>Ritmo proyectado: $${Math.round(ritmoMensualUYU).toLocaleString('es-UY')} UYU/mes.</strong> A este ritmo completarías el dinero recién el <strong>${fechaTexto}</strong> (después de la fecha de viaje).`;
           }
         }
       }
