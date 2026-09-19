@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahorro Viaje México 2028 🇲🇽</title>
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --accent-green: #2ea043;
+      --accent-blue: #2f81f7;
+      --accent-yellow: #d29922;
+      --accent-red: #f85149;
+      --text-color: #c9d1d9;
+      --border-color: #30363d;
+      --input-bg: #0d1117;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 950px;
+      width: 100%;
+    }
+
+    .header {
+      text-align: center;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      color: #ffffff;
+      margin: 0 0 8px 0;
+      font-size: 1.6rem;
+    }
+
+    .grid-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 0.85rem;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card .value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .progress-bar-bg {
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      height: 22px;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-bar-fill {
+      background-color: var(--accent-green);
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .status-badge {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .status-ok { background-color: rgba(46, 160, 67, 0.15); border: 1px solid var(--accent-green); color: #56d364; }
+    .status-warn { background-color: rgba(210, 153, 34, 0.15); border: 1px solid var(--accent-yellow); color: #e3b341; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 800px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    form, .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    label { font-size: 0.85rem; font-weight: 600; color: #8b949e; }
+
+    input {
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 10px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      width: 100%;
+      box-sizing: border-border-box;
+    }
+
+    input:focus { outline: none; border-color: var(--accent-blue); }
+
+    button {
+      background-color: var(--accent-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover { opacity: 0.9; }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .item-row span { font-size: 0.9rem; flex-grow: 1; }
+    .item-row input { width: 110px; text-align: right; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th { background-color: #21262d; color: #ffffff; }
+
+    .btn-del {
+      background: none;
+      border: none;
+      color: var(--accent-red);
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>✈️ Ahorro Viaje México 2028</h1>
+      <p style="margin: 0; color: #8b949e;">Meta: 28 Ene 2028 – 27 Feb 2028 (30 Días / 4 Personas)</p>
+    </div>
+
+    <!-- DASHBOARD PRINCIPAL -->
+    <div class="grid-dashboard">
+      <div class="card">
+        <h3>Meta Total Calculada</h3>
+        <div class="value" id="disp-meta">$0 USD</div>
+      </div>
+      <div class="card">
+        <h3>Total Ahorrado</h3>
+        <div class="value" id="disp-ahorrado" style="color: var(--accent-green);">$0 USD</div>
+      </div>
+      <div class="card">
+        <h3>Faltante</h3>
+        <div class="value" id="disp-faltante">$0 USD</div>
+      </div>
+      <div class="card">
+        <h3>Promedio/Quincena</h3>
+        <div class="value" id="disp-promedio">$0 USD</div>
+      </div>
+    </div>
+
+    <!-- BARRA DE PROGRESO -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; font-weight: bold;">
+        <span>Progreso del Objetivo</span>
+        <span id="disp-porcentaje">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div id="status-badge" class="status-badge status-warn">
+        Cargando estado del plan...
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <!-- EDICIÓN DE DESGLOSE DE PRESUPUESTO -->
+      <div class="card">
+        <h3>📊 Desglose de Gastos (Editable)</h3>
+        <p style="font-size: 0.8rem; color: #8b949e; margin-top: -5px;">Modifica los números según vayas confirmando tarifas exactas:</p>
+
+        <div class="item-list">
+          <div class="item-row">
+            <span>Paquete Base + Vuelos (13n Cancún)</span>
+            <input type="number" class="budget-item" data-key="paquete" value="5800" step="50">
+          </div>
+          <div class="item-row">
+            <span>Traslados Internos (Vuelos/Buses/Ubers)</span>
+            <input type="number" class="budget-item" data-key="traslados" value="1400" step="50">
+          </div>
+          <div class="item-row">
+            <span>Gastos CDMX (4 noches)</span>
+            <input type="number" class="budget-item" data-key="cdmx" value="700" step="50">
+          </div>
+          <div class="item-row">
+            <span>Gastos Aguascalientes (12 noches)</span>
+            <input type="number" class="budget-item" data-key="aguas" value="500" step="50">
+          </div>
+          <div class="item-row">
+            <span>Extras Cancún (Excursiones/Compras)</span>
+            <input type="number" class="budget-item" data-key="cancun_extras" value="600" step="50">
+          </div>
+          <div class="item-row">
+            <span>Fondo de Emergencia</span>
+            <input type="number" class="budget-item" data-key="emergencia" value="1000" step="50">
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTRO Y HISTORIAL DE APORTES -->
+      <div>
+        <div class="card" style="margin-bottom: 20px;">
+          <h3>➕ Registrar Aporte Quincenal</h3>
+          <form id="form-aporte">
+            <div>
+              <label>Fecha del Aporte:</label>
+              <input type="date" id="input-fecha" required>
+            </div>
+            <div>
+              <label>Monto Ahorrado ($ USD):</label>
+              <input type="number" id="input-monto" placeholder="Ej. 300" step="0.01" required>
+            </div>
+            <div>
+              <label>Nota / Detalle (Opcional):</label>
+              <input type="text" id="input-nota" placeholder="Ej. 1era quincena Octubre">
+            </div>
+            <button type="submit">Guardar Aporte</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>📜 Historial de Aportes</h3>
+          <div style="max-height: 250px; overflow-y: auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Monto</th>
+                  <th>Nota</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tabla-aportes"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FECHA_VIAJE = new Date("2028-01-28");
+
+    let presupuestos = JSON.parse(localStorage.getItem('presupuesto_desglose')) || {
+      paquete: 5800,
+      traslados: 1400,
+      cdmx: 700,
+      aguas: 500,
+      cancun_extras: 600,
+      emergencia: 1000
+    };
+
+    let aportes = JSON.parse(localStorage.getItem('aportes_viaje')) || [];
+
+    document.getElementById('input-fecha').valueAsDate = new Date();
+
+    // Cargar valores iniciales en los inputs de presupuesto
+    document.querySelectorAll('.budget-item').forEach(input => {
+      const key = input.getAttribute('data-key');
+      if (presupuestos[key] !== undefined) {
+        input.value = presupuestos[key];
+      }
+
+      input.addEventListener('input', (e) => {
+        presupuestos[key] = parseFloat(e.target.value) || 0;
+        localStorage.setItem('presupuesto_desglose', JSON.stringify(presupuestos));
+        calcular();
+      });
+    });
+
+    function guardarAportes() {
+      localStorage.setItem('aportes_viaje', JSON.stringify(aportes));
+    }
+
+    function calcular() {
+      const metaTotal = Object.values(presupuestos).reduce((a, b) => a + b, 0);
+      const totalAhorrado = aportes.reduce((acc, curr) => acc + curr.monto, 0);
+      const faltante = Math.max(0, metaTotal - totalAhorrado);
+      const porcentaje = metaTotal > 0 ? Math.min(100, (totalAhorrado / metaTotal) * 100) : 0;
+
+      document.getElementById('disp-meta').innerText = `$${metaTotal.toLocaleString('en-US')} USD`;
+      document.getElementById('disp-ahorrado').innerText = `$${totalAhorrado.toLocaleString('en-US')} USD`;
+      document.getElementById('disp-faltante').innerText = `$${faltante.toLocaleString('en-US')} USD`;
+      document.getElementById('disp-porcentaje').innerText = `${porcentaje.toFixed(1)}%`;
+      document.getElementById('progress-fill').style.width = `${porcentaje}%`;
+
+      // Cálculo de Quincenas Restantes
+      const hoy = new Date();
+      const diasRestantes = Math.max(1, (FECHA_VIAJE - hoy) / (1000 * 60 * 60 * 24));
+      const quincenasRestantes = Math.ceil(diasRestantes / 15.2);
+
+      const cuotaSugeridaQuincenal = faltante / quincenasRestantes;
+      const promedioActual = aportes.length > 0 ? (totalAhorrado / aportes.length) : 0;
+
+      document.getElementById('disp-promedio').innerText = `$${promedioActual.toFixed(0)} USD`;
+
+      const badge = document.getElementById('status-badge');
+      if (faltante === 0) {
+        badge.className = "status-badge status-ok";
+        badge.innerText = "🎉 ¡FELICITACIONES! Has alcanzado la meta total para el viaje.";
+      } else {
+        badge.className = "status-badge status-warn";
+        badge.innerHTML = `Quedan aprox. <strong>${quincenasRestantes} quincenas</strong> para la fecha del viaje.<br>` +
+                          `Necesitas ahorrar <strong>$${cuotaSugeridaQuincenal.toFixed(2)} USD por quincena</strong> para llegar al 100% a tiempo.`;
+      }
+
+      renderTabla();
+    }
+
+    function renderTabla() {
+      const tbody = document.getElementById('tabla-aportes');
+      tbody.innerHTML = '';
+      
+      aportes.slice().reverse().forEach((item, idx) => {
+        const indexReal = aportes.length - 1 - idx;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.fecha}</td>
+          <td><strong>$${item.monto.toFixed(2)}</strong></td>
+          <td>${item.nota || '-'}</td>
+          <td><button class="btn-del" onclick="eliminarAporte(${indexReal})">✕</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('form-aporte').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fecha = document.getElementById('input-fecha').value;
+      const monto = parseFloat(document.getElementById('input-monto').value);
+      const nota = document.getElementById('input-nota').value;
+
+      if (monto > 0) {
+        aportes.push({ fecha, monto, nota });
+        guardarAportes();
+        calcular();
+        document.getElementById('input-monto').value = '';
+        document.getElementById('input-nota').value = '';
+      }
+    });
+
+    function eliminarAporte(index) {
+      aportes.splice(index, 1);
+      guardarAportes();
+      calcular();
+    }
+
+    calcular();
+  </script>
+</body>
+</html>
